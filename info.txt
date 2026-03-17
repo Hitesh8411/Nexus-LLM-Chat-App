@@ -1,0 +1,64 @@
+PREVIOUS ERROR (what you saw)
+-----------------------------
+Backend error response:
+  [GoogleGenerativeAI Error]: Error fetching from
+  https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent
+  [404 Not Found] models/gemini-1.5-flash-latest is not found for API version v1beta,
+  or is not supported for generateContent.
+
+
+ROOT CAUSE (why it happened)
+----------------------------
+In D:\Desktop\LLM\llm-chat-app\server\server.js the model name was hard-coded as:
+  gemini-1.5-flash-latest
+
+That model name is not available for your API key / API version anymore, so the
+Generative Language API returned 404 "model not found".
+
+
+HOW IT WAS FIXED (what I changed)
+---------------------------------
+1) Updated the server to use a valid model by default:
+   - Default model is now: gemini-flash-latest
+
+2) Added an optional .env override:
+   - If you set GEMINI_MODEL in .env, the server will use that instead.
+
+3) Added a safe fallback:
+   - If GEMINI_MODEL points to a model that returns 404, the server retries with
+     gemini-flash-latest automatically.
+
+
+WHAT TO DO IF IT HAPPENS AGAIN
+------------------------------
+1) List available models for your API key (quick check):
+   - GET https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_KEY
+
+2) Pick one of the returned model names and set it in:
+   D:\Desktop\LLM\llm-chat-app\.env
+
+   Example:
+     GEMINI_MODEL=gemini-2.0-flash
+
+3) Restart the backend server (otherwise it will keep using the old model value).
+
+
+COMMON ERROR: 429 TOO MANY REQUESTS (QUOTA / RATE LIMIT)
+-------------------------------------------------------
+Example:
+  [429 Too Many Requests] You exceeded your current quota...
+  Quota exceeded... limit: 0 ...
+
+Meaning:
+  This is NOT a code bug. It means your API key / project has no available quota
+  (often "limit: 0") or you are being rate-limited.
+
+Fix:
+  - Enable billing / upgrade plan for the Google project that owns the API key
+  - Make sure Gemini API is enabled for that project
+  - If you are rate-limited temporarily, wait the suggested time and retry
+
+App behavior:
+  - Backend returns HTTP 429 and sets Retry-After (when available)
+  - Frontend shows a friendly message instead of the full raw error text
+
