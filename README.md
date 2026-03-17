@@ -95,9 +95,6 @@ npm run dev
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:5000`
 
-## 🎯 Interview Talking Points
-"I built a full-stack LLM chat app using React with Vite and a Node.js Express backend. Instead of Next.js API routes, I separated the backend for better scalability. I implemented prompt pipelines for chat, summarization, and classification, and integrated Google Gemini API. The frontend handles state and UI, while the backend securely manages API calls using environment variables."
-
 ## 🚀 Deployment Pro-Tip
 - **Frontend**: Vercel / Netlify.
 - **Backend**: Render / Railway.
